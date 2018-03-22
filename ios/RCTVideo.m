@@ -277,14 +277,14 @@ static NSString *const timedMetadata = @"timedMetadata";
     NSString *loadedIdentifier = [self.photosFrameworkExtension startLoadingPhotosAsset:source bufferingCallback:self.onVideoBuffer andReactTag:self.reactTag andCompleteBlock:^(NSDictionary *source, AVPlayerItem *playerItem) {
             [self setupVideoPlayback:source andPlayerItem:playerItem];
     }];
-    
+
     if(!loadedIdentifier) {
         [self setupVideoPlayback:source andPlayerItem:[self playerItemForSource:source]];
     }
 }
 -(void) setupVideoPlayback:(NSDictionary *)source andPlayerItem:(AVPlayerItem*)playerItem {
     _playerItem = playerItem;
-    
+
   [self addPlayerItemObservers];
 
   [_player pause];
@@ -746,8 +746,11 @@ static NSString *const timedMetadata = @"timedMetadata";
 - (void)removePlayerLayer
 {
     [_playerLayer removeFromSuperlayer];
-    [_playerLayer removeObserver:self forKeyPath:readyForDisplayKeyPath];
-    _playerLayer = nil;
+
+    @try {
+        [_playerLayer removeObserver:self forKeyPath:readyForDisplayKeyPath];
+      } @catch (NSException *e) { }
+        _playerLayer = nil;
 }
 
 #pragma mark - RCTVideoPlayerViewControllerDelegate
